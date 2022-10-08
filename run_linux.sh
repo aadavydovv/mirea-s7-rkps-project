@@ -1,6 +1,6 @@
 #!/bin/sh
 
 cd src
-../bin/run
+../output/run
 
 cd ..
