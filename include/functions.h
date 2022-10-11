@@ -2,8 +2,8 @@
 #define CODE_FUNCTIONS_H
 
 #ifdef __ANDROID__
-char path_of_file_output[256];
-char path_of_file_input[256];
+char* path_of_file_output;
+char* path_of_file_input;
 #endif
 
 void PRINT(const char* format, ...);

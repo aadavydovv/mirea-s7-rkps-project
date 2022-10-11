@@ -14,6 +14,8 @@ project("big6")
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+include_directories(../../../../../../../include)
+
 add_library( # Sets the name of the library.
         big6
 
@@ -21,7 +23,8 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        main.c)
+        ../../../../../../main.c ../../../../../functions.c
+        )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

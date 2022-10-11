@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include "functions.h"
+#include <stdio.h>
+#include <unistd.h>
 
 #ifdef __ANDROID__
 #include <jni.h>
@@ -431,6 +433,8 @@ const char* TAB(unsigned int amount_of_spaces) {
 #ifdef __ANDROID__
 JNIEXPORT jobject JNICALL
 Java_mirea_s7_rkps_big6_MainActivity_main(JNIEnv *env, jobject obj, jstring jOutfile, jstring jInfile) {
+    path_of_file_output = malloc(512);
+    path_of_file_input = malloc(512);
     strcpy(path_of_file_output, (*env)->GetStringUTFChars(env, jOutfile, 0));
     strcpy(path_of_file_input,(*env)->GetStringUTFChars(env, jInfile, 0));
 #else

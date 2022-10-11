@@ -8,7 +8,7 @@
 void PRINT(const char* format, ...) {
     char* p_path_of_file_output;
 #ifdef __ANDROID__
-    *p_path_of_file_output = &path_of_file_output;
+    p_path_of_file_output = path_of_file_output;
 #endif
 
     va_list args;
@@ -23,7 +23,7 @@ void PRINT(const char* format, ...) {
 void INPUT(char* target) {
     char* p_path_of_file_input;
 #ifdef __ANDROID__
-    *p_path_of_file_input = &path_of_file_input;
+    p_path_of_file_input = path_of_file_input;
 #endif
 
     long size = 0;
