@@ -121,7 +121,7 @@ android:
 
 
 .PHONY: clean
-.PHONY: clean_console
+.PHONY: clean_android
 
 .PHONY: console
 
