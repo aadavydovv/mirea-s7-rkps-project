@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "functions.h"
 
 char* N_str;
 long* S_dim;
@@ -10,6 +11,13 @@ long F, S2, S3, P, I, S_num, J, X, TE, N_num, V;
 long W = 0;
 
 unsigned int state_of_xorshift;
+
+#ifdef __ANDROID__
+FILE *file_output;
+FILE *file_input;
+char path_of_file_output[256];
+char path_of_file_input[256];
+#endif
 
 void initialize_xorshift() { state_of_xorshift = time(NULL) ^ (long) &printf; }
 
@@ -34,10 +42,8 @@ long VAL(char* string) {
 }
 
 void INPUT_string(char** p_target) {
-    const int max_length_of_string = 64;
-    int size_of_string = (int) sizeof(char) * max_length_of_string;
-    *p_target = malloc(size_of_string);
-    fgets(*p_target, size_of_string, stdin);
+    *p_target = malloc(512);
+    INPUT(*p_target);
     strtok(*p_target, "\n");
 }
 
@@ -51,12 +57,15 @@ void (* p_line90)();
 
 void line3440() {
     // 3440
+    #ifdef __ANDROID__
+    sleep(5);
+    #endif
     exit(0);
 }
 
 void line3410() {
     // 3410
-    printf("YOU WON EXACTLY $ %ld !! NOT BAD !!!\n", W);
+    PRINT("YOU WON EXACTLY $ %ld !! NOT BAD !!!\n", W);
 
     // 3440
     line3440();
@@ -64,7 +73,7 @@ void line3410() {
 
 void line3380() {
     // 3380
-    printf("YOU DIDN'T WIN ANY MONEY, BUT I'M WILLING TO CALL IT EVEN!!\n");
+    PRINT("YOU DIDN'T WIN ANY MONEY, BUT I'M WILLING TO CALL IT EVEN!!\n");
 
     // 3390
     line3440();
@@ -72,7 +81,7 @@ void line3380() {
 
 void line3360() {
     // 3360
-    printf("\n\nSO YOU WANT TO CASH IN YOUR CHIPS, I SEE!!\n");
+    PRINT("\n\nSO YOU WANT TO CASH IN YOUR CHIPS, I SEE!!\n");
 
     // 3370
     if (W > 0) {
@@ -85,13 +94,13 @@ void line3360() {
 
 void line3260() {
     // 3260
-    if (W == 0) { printf("YOU'RE EVEN!!\n\n"); }
+    if (W == 0) { PRINT("YOU'RE EVEN!!\n\n"); }
 
     // 3270
-    if (W > 0) { printf("YOU'RE AHEAD $ %ld\n\n", W); }
+    if (W > 0) { PRINT("YOU'RE AHEAD $ %ld\n\n", W); }
 
     // 3280
-    if (W < 0) { printf("YOU'RE BEHIND $%ld\n\n", W); }
+    if (W < 0) { PRINT("YOU'RE BEHIND $%ld\n\n", W); }
 
     p_line90();
 }
@@ -115,13 +124,13 @@ void line2060() {
         S3 *= C1;
 
         // 2140
-        printf("YOU WIN  %d  TIMES ON: %ld\n", C1, S2);
+        PRINT("YOU WIN  %d  TIMES ON: %ld\n", C1, S2);
     } else {
         // 2110
         S3 *= -1;
 
         // 2120
-        printf("YOU LOSE ON:  %ld\n", S2);
+        PRINT("YOU LOSE ON:  %ld\n", S2);
     }
 
     // 2150
@@ -156,7 +165,7 @@ void line1870() {
     }
 
     // 1950
-    printf("THE LUCKY NUMBERS ARE:  %ld  %ld  %ld\n", S_dim[1], S_dim[2], S_dim[3]);
+    PRINT("THE LUCKY NUMBERS ARE:  %ld  %ld  %ld\n", S_dim[1], S_dim[2], S_dim[3]);
 
     // 1960
     // return;
@@ -186,13 +195,13 @@ void line820() {
 }
 
 void line710() {
-    printf("WAGER ON EACH OF THE THREE? ");
+    PRINT("WAGER ON EACH OF THE THREE? ");
 
     // 720
     INPUT_number(&F);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&I);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&J);
 
     // 730
@@ -201,20 +210,20 @@ void line710() {
     }
 
     // 800
-    printf("THE HOUSE LIMIT IS FROM $1 TO $500.\n");
+    PRINT("THE HOUSE LIMIT IS FROM $1 TO $500.\n");
 
     // 810
     line710();
 }
 
 void line600() {
-    printf("WHAT THREE NUMBERS? ");
+    PRINT("WHAT THREE NUMBERS? ");
 
     // 610
     INPUT_number(&V);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&P);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&S_num);
 
     // 620
@@ -223,7 +232,7 @@ void line600() {
     }
 
     // 690
-    printf("YOU CAN ONLY BET ON AN INTEGER FROM ONE TO SIX.\n");
+    PRINT("YOU CAN ONLY BET ON AN INTEGER FROM ONE TO SIX.\n");
 
     // 700
     line600();
@@ -249,11 +258,11 @@ void line550() {
 
 void line460() {
     // 460
-    printf("WAGER ON BOTH? ");
+    PRINT("WAGER ON BOTH? ");
 
     // 470
     INPUT_number(&F);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&I);
 
     // 480
@@ -262,7 +271,7 @@ void line460() {
     }
 
     // 530
-    printf("THE HOUSE LIMIT IS FROM $1 TO $500.\n");
+    PRINT("THE HOUSE LIMIT IS FROM $1 TO $500.\n");
 
     // 540
     line460();
@@ -270,11 +279,11 @@ void line460() {
 
 void line370() {
     // 370
-    printf("WHAT TWO NUMBERS? ");
+    PRINT("WHAT TWO NUMBERS? ");
 
     // 380
     INPUT_number(&V);
-    printf("?? ");
+    PRINT("?? ");
     INPUT_number(&P);
 
     // 390
@@ -283,7 +292,7 @@ void line370() {
     }
 
     // 440
-    printf("YOU CAN ONLY BET ON AN INTEGER FROM ONE TO SIX.\n");
+    PRINT("YOU CAN ONLY BET ON AN INTEGER FROM ONE TO SIX.\n");
 
     // 450
     line370();
@@ -304,7 +313,7 @@ void line330() {
 
 void line260() {
     // 260
-    printf("WAGER? ");
+    PRINT("WAGER? ");
 
     // 270
     INPUT_number(&F);
@@ -315,7 +324,7 @@ void line260() {
     }
 
     // 310
-    printf("THE HOUSE LIMIT IS FROM $1 TO $500\n");
+    PRINT("THE HOUSE LIMIT IS FROM $1 TO $500\n");
 
     // 320
     line260();
@@ -323,7 +332,7 @@ void line260() {
 
 void line190() {
     // 190
-    printf("WHAT NUMBER? ");
+    PRINT("WHAT NUMBER? ");
 
     // 200
     INPUT_number(&V);
@@ -334,7 +343,7 @@ void line190() {
     }
 
     // 240
-    printf("YOU CAN ONLY BET ON AN INTEGER FRON ONE TO SIX.\n");
+    PRINT("YOU CAN ONLY BET ON AN INTEGER FRON ONE TO SIX.\n");
 
     // 250
     line190();
@@ -342,7 +351,7 @@ void line190() {
 
 void line80() {
     // 80
-    printf("YOU CANNOT BET ON LESS THAN ONE OR MORE THAN THREE NUMBERS.\n");
+    PRINT("YOU CANNOT BET ON LESS THAN ONE OR MORE THAN THREE NUMBERS.\n");
 
     // 90
     p_line90();
@@ -350,7 +359,7 @@ void line80() {
 
 void line90() {
     // 90
-    printf("HOW MANY NUMBERS DO YOU WANT TO BET ON? ");
+    PRINT("HOW MANY NUMBERS DO YOU WANT TO BET ON? ");
 
     // 100
     INPUT_string(&N_str);
@@ -418,51 +427,52 @@ void line90() {
 
 const char* TAB(unsigned int amount_of_spaces) {
     char* spaces = malloc(sizeof(char) * amount_of_spaces);
-    for (int i = 0; i < amount_of_spaces; i++) { spaces[i] = ' '; }
+    for (unsigned int i = 0; i < amount_of_spaces; i++) { spaces[i] = ' '; }
     return spaces;
 }
-
+#ifdef __ANDROID__
+JNIEXPORT jobject JNICALL
+Java_mirea_s7_rkps_big6_MainActivity_main(JNIEnv *env, jobject obj, jstring jOutfile, jstring jInfile) {
+    strcpy(path_of_file_output, (*env)->GetStringUTFChars(env, jOutfile, 0));
+    strcpy(path_of_file_input,(*env)->GetStringUTFChars(env, jInfile, 0));
+#else
 int main() {
+#endif
     initialize_xorshift();
     p_line90 = line90;
 
-    char tab[27];
-
     // 1
-    strcpy(tab, TAB(27));
-    printf("%sBIG6\n", tab);
+    PRINT("%sBIG6\n", TAB(27));
 
     // 2
-    strcpy(tab, TAB(20));
-    printf("%sCREATIVE COMPUTING\n", tab);
+    PRINT("%sCREATIVE COMPUTING\n", TAB(20));
 
     // 3
-    strcpy(tab, TAB(18));
-    printf("%sMORRISTOWN, NEW JERSEY\n", tab);
+    PRINT("%sMORRISTOWN, NEW JERSEY\n", TAB(18));
 
     // 4
-    printf("\n\n\n");
+    PRINT("\n\n\n");
 
     // 10
-    printf("  THIS PROGRAM IS A DICE WHEEL GAME IN WHICH\n");
+    PRINT("  THIS PROGRAM IS A DICE WHEEL GAME IN WHICH\n");
 
     // 20
-    printf("YOU CAN BET ON ANY NUMBER BETWEEN ONE AND SIX\n");
+    PRINT("YOU CAN BET ON ANY NUMBER BETWEEN ONE AND SIX\n");
 
     // 30
-    printf("AND UP TO THREE NUMBERS.\n");
+    PRINT("AND UP TO THREE NUMBERS.\n");
 
     // 40
-    printf("  THE HOUSE LIMIT IS FROM $1 TO $500!!\n");
+    PRINT("  THE HOUSE LIMIT IS FROM $1 TO $500!!\n");
 
     // 50
-    printf("TO END THIS PROGRAM TYPE THE WORD 'STOP'.\n");
+    PRINT("TO END THIS PROGRAM TYPE THE WORD 'STOP'.\n");
 
     // 60
-    printf("GOOD LUCK!\n");
+    PRINT("GOOD LUCK!\n");
 
     // 65
-    printf("\n\n");
+    PRINT("\n\n");
 
     // 67
     S_dim = malloc(sizeof(long) * (3 + 1));
@@ -472,4 +482,6 @@ int main() {
 
     // 80
     line80();
+
+    return 0;
 }
