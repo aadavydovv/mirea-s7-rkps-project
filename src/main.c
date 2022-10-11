@@ -40,25 +40,30 @@ long VAL(char* string) {
     return number;
 }
 
-void INPUT_string(char** p_target) {
+void input_string(char** p_target) {
     *p_target = malloc(512);
-    INPUT(*p_target);
+    input(*p_target);
     strtok(*p_target, "\n");
 }
 
-void INPUT_number(long* p_target) {
+void input_number(long* p_target) {
     char* p_number_as_string;
-    INPUT_string(&p_number_as_string);
+    input_string(&p_number_as_string);
     *p_target = VAL(p_number_as_string);
 }
+
+#define INPUT(p_target) _Generic((p_target), \
+    char**: input_string,       \
+    long*: input_number       \
+    )(p_target);
 
 void (* p_line90)();
 
 void line3440() {
     // 3440
-    #ifdef __ANDROID__
+#ifdef __ANDROID__
     sleep(5);
-    #endif
+#endif
     exit(0);
 }
 
@@ -197,11 +202,11 @@ void line710() {
     PRINT("WAGER ON EACH OF THE THREE? ");
 
     // 720
-    INPUT_number(&F);
+    INPUT(&F)
     PRINT("?? ");
-    INPUT_number(&I);
+    INPUT(&I)
     PRINT("?? ");
-    INPUT_number(&J);
+    INPUT(&J)
 
     // 730
     if (F <= 500 || F >= 1 || I <= 500 || I >= 1 || J <= 500 || J >= 1) {
@@ -219,11 +224,11 @@ void line600() {
     PRINT("WHAT THREE NUMBERS? ");
 
     // 610
-    INPUT_number(&V);
+    INPUT(&V)
     PRINT("?? ");
-    INPUT_number(&P);
+    INPUT(&P)
     PRINT("?? ");
-    INPUT_number(&S_num);
+    INPUT(&S_num)
 
     // 620
     if (V <= 6 || V >= 1 || P <= 6 || P >= 1 || S_num <= 6 || S_num >= 1) {
@@ -260,9 +265,9 @@ void line460() {
     PRINT("WAGER ON BOTH? ");
 
     // 470
-    INPUT_number(&F);
+    INPUT(&F)
     PRINT("?? ");
-    INPUT_number(&I);
+    INPUT(&I)
 
     // 480
     if (F <= 500 || F >= 1 || I <= 500 || I >= 1) {
@@ -281,9 +286,9 @@ void line370() {
     PRINT("WHAT TWO NUMBERS? ");
 
     // 380
-    INPUT_number(&V);
+    INPUT(&V)
     PRINT("?? ");
-    INPUT_number(&P);
+    INPUT(&P)
 
     // 390
     if (V <= 6 || V >= 1 || P <= 6 || P >= 1) {
@@ -315,7 +320,7 @@ void line260() {
     PRINT("WAGER? ");
 
     // 270
-    INPUT_number(&F);
+    INPUT(&F)
 
     // 280
     if (F <= 500 || F >= 1) {
@@ -334,7 +339,7 @@ void line190() {
     PRINT("WHAT NUMBER? ");
 
     // 200
-    INPUT_number(&V);
+    INPUT(&V)
 
     // 210
     if (V <= 6 || V >= 1) {
@@ -361,7 +366,7 @@ void line90() {
     PRINT("HOW MANY NUMBERS DO YOU WANT TO BET ON? ");
 
     // 100
-    INPUT_string(&N_str);
+    INPUT(&N_str)
     if (strcmp(N_str, "STOP") == 0) {
         line3360();
     }

@@ -7,6 +7,6 @@ char* path_of_file_input;
 #endif
 
 void PRINT(const char* format, ...);
-void INPUT(char* target);
+void input(char* target);
 
 #endif //CODE_FUNCTIONS_H

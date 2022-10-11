@@ -28,14 +28,16 @@ void PRINT(const char* format, ...) {
 
     char* print_buffer = malloc(512);
     vsprintf(print_buffer, format, args);
-    strtok(print_buffer, "\n");
-
     va_end(args);
 
+    strtok(print_buffer, "\n");
     js_print(print_buffer);
     emscripten_sleep(20);
 }
 
-void INPUT(char* target) {
+void input(char* target) {
     fgets(target, 512, stdin);
+
+    strtok(target, "\n");
+    js_print(target);
 }

@@ -20,7 +20,7 @@ void PRINT(const char* format, ...) {
     fclose(file_output);
 }
 
-void INPUT(char* target) {
+void input(char* target) {
     char* p_path_of_file_input;
 #ifdef __ANDROID__
     p_path_of_file_input = path_of_file_input;

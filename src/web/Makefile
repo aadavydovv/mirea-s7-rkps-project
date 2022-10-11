@@ -6,11 +6,11 @@ DIR_SOURCE := src
 INCLUDES := -I ../../include
 LINKS :=
 
-FLAGS_COMPILER := -std=c99 -Wall -Wextra -pedantic
+FLAGS_COMPILER := -Wall -Wextra -pedantic
 FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion -Wno-extra-semi
 FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
 
-FLAGS_CPPCHECK := -q --std=c99 --enable=all --inconclusive $(INCLUDES)
+FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
 FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction
 FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 

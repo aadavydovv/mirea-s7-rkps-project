@@ -44,11 +44,11 @@ DIR_ANDROID := $(DIR_SOURCE)/android/project
 
 INCLUDES := -I include
 
-FLAGS_COMPILER := -std=c99 -Wall -Wextra -pedantic
+FLAGS_COMPILER := -Wall -Wextra -pedantic
 FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion
 FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
 
-FLAGS_CPPCHECK := -q --std=c99 --enable=all --inconclusive $(INCLUDES)
+FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
 FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=incorrectLogicOperator --suppress=unusedFunction
 FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 
