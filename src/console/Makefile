@@ -2,7 +2,6 @@ COMPILER := gcc
 SOURCES_EXT := c
 
 DIR_SOURCE := src
-DIR_BUILD := ../../build/console
 
 INCLUDES := -I ../../include
 LINKS :=
@@ -15,12 +14,8 @@ FLAGS_CPPCHECK := -q --std=c99 --enable=all --inconclusive $(INCLUDES)
 FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction
 FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 
-SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
-OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
-
-BUILD_TARGETS := $(DIR_BUILD)/%.o
-
 ifeq ($(OS),Windows_NT)
+	DIR_BUILD := ..\..\build\console
 	LINKS += -lmingw32
 
 	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
@@ -29,12 +24,19 @@ ifeq ($(OS),Windows_NT)
 	CMD_MKDIR_OUTPUT := if not exist "$(DIR_OUTPUT)" md "$(DIR_OUTPUT)"
 	CMD_MKDIR_BUILD := if not exist "$(DIR_BUILD)" md "$(DIR_BUILD)"
 else
+	DIR_BUILD := ../../build/console
+
 	CMD_CPPCHECK := cppcheck
 
 	CMD_RM := rm -rf
 	CMD_MKDIR_OUTPUT := mkdir -p $(DIR_OUTPUT)
 	CMD_MKDIR_BUILD := mkdir -p $(DIR_BUILD)
 endif
+
+SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
+OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
+
+BUILD_TARGETS := $(DIR_BUILD)/%.o
 
 
 $(OBJECTS): $(SOURCES)
