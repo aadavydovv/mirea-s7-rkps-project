@@ -4,6 +4,10 @@
 #include <time.h>
 #include "functions.h"
 
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
+
 char* N_str;
 long* S_dim;
 int A, B, C, C1;
@@ -11,13 +15,6 @@ long F, S2, S3, P, I, S_num, J, X, TE, N_num, V;
 long W = 0;
 
 unsigned int state_of_xorshift;
-
-#ifdef __ANDROID__
-FILE *file_output;
-FILE *file_input;
-char path_of_file_output[256];
-char path_of_file_input[256];
-#endif
 
 void initialize_xorshift() { state_of_xorshift = time(NULL) ^ (long) &printf; }
 
@@ -430,6 +427,7 @@ const char* TAB(unsigned int amount_of_spaces) {
     for (unsigned int i = 0; i < amount_of_spaces; i++) { spaces[i] = ' '; }
     return spaces;
 }
+
 #ifdef __ANDROID__
 JNIEXPORT jobject JNICALL
 Java_mirea_s7_rkps_big6_MainActivity_main(JNIEnv *env, jobject obj, jstring jOutfile, jstring jInfile) {

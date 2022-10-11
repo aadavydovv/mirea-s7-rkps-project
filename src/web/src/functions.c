@@ -21,6 +21,6 @@ void PRINT(const char* format, ...) {
     emscripten_sleep(20);
 }
 
-void INPUT(char* target, ...) {
+void INPUT(char* target) {
     fgets(target, 512, stdin);
 }

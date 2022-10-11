@@ -11,6 +11,6 @@ void PRINT(const char* format, ...) {
     va_end(args);
 }
 
-void INPUT(char* target, ...) {
+void INPUT(char* target) {
     fgets(target, 512, stdin);
 }
