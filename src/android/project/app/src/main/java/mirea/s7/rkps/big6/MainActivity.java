@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -129,14 +131,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        ImageView inputButton = findViewById(R.id.button);
-        inputButton.setOnClickListener(new View.OnClickListener() {
+        final EditText editText = (EditText) findViewById(R.id.editText);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View view) {
-                EditText editText = findViewById(R.id.editText);
-                String text = editText.getText().toString();
-                processInfile(text);
-                editText.setText(null);
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    String text = editText.getText().toString();
+                    processInfile(text);
+                    editText.setText(null);
+                    handled = true;
+                }
+                return handled;
             }
         });
     }
