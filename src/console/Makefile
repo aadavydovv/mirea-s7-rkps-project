@@ -1,7 +1,7 @@
 COMPILER := gcc
 SOURCES_EXT := c
 
-DIR_SOURCE := src
+DIR_SOURCE := .
 
 INCLUDES := -I ../../include
 LINKS :=
@@ -36,8 +36,6 @@ endif
 SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
 OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
 
-BUILD_TARGETS := $(DIR_BUILD)/%.o
-
 
 $(OBJECTS): $(SOURCES)
 	@echo
@@ -48,8 +46,3 @@ $(OBJECTS): $(SOURCES)
 	@echo " сборка" $@
 	$(CMD_MKDIR_BUILD)
 	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $< -save-temps
-
-clean:
-	$(CMD_RM) $(DIR_BUILD)
-
-.PHONY: clean

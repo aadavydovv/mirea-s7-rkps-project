@@ -3,8 +3,6 @@ DIR_OUTPUT := output
 LINKS := -lm
 
 ifeq ($(OS),Windows_NT)
-	#LINKS += -lmingw32
-
 	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
 	CMD_GRADLEW := gradlew
 
@@ -20,32 +18,25 @@ else
 	CMD_MKDIR_BUILD := mkdir -p $(DIR_BUILD)
 endif
 
-COMPILER := gcc
-COMPILER_WEB := emcc
-
 DIR_SOURCE := src
 SOURCES_EXT := c
 
 KEYWORD_CONSOLE := console
 DIR_CONSOLE := $(DIR_SOURCE)/$(KEYWORD_CONSOLE)
-DIR_SOURCE_CONSOLE := $(DIR_CONSOLE)/$(DIR_SOURCE)
+DIR_SOURCE_CONSOLE := $(DIR_CONSOLE)
 DIR_BUILD_CONSOLE := $(DIR_BUILD)/$(KEYWORD_CONSOLE)
-DIRS_OF_CONSOLE_MAKEFILES := . $(DIR_CONSOLE)
-CLEAN_DIRS_CONSOLE := $(addsuffix clean_console,$(DIRS_OF_CONSOLE_MAKEFILES))
 
 KEYWORD_WEB := web
 DIR_WEB := $(DIR_SOURCE)/$(KEYWORD_WEB)
-DIR_SOURCE_WEB := $(DIR_WEB)/$(DIR_SOURCE)
+DIR_SOURCE_WEB := $(DIR_WEB)
 DIR_BUILD_WEB := $(DIR_BUILD)/$(KEYWORD_WEB)
-DIRS_OF_WEB_MAKEFILES := . $(DIR_WEB)
-CLEAN_DIRS_WEB := $(addsuffix clean_web,$(DIRS_OF_WEB_MAKEFILES))
 
 DIR_ANDROID := $(DIR_SOURCE)/android/project
 
 INCLUDES := -I include
 
 FLAGS_COMPILER := -Wall -Wextra -pedantic
-FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion
+FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion -Wno-unused-variable -Wno-tautological-overlap-compare
 FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
 
 FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
@@ -56,17 +47,22 @@ SOURCES_MAIN := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
 SOURCES_CONSOLE := $(wildcard $(DIR_SOURCE_CONSOLE)/*.$(SOURCES_EXT))
 SOURCES_WEB := $(wildcard $(DIR_SOURCE_WEB)/*.$(SOURCES_EXT))
 
-OBJECTS_CONSOLE := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES_MAIN:.$(SOURCES_EXT)=.o))
-OBJECTS_CONSOLE += $(patsubst $(DIR_SOURCE_CONSOLE)/%,$(DIR_BUILD_CONSOLE)/%,$(SOURCES_CONSOLE:.$(SOURCES_EXT)=.o))
-OBJECTS_WEB := $(patsubst $(DIR_SOURCE_WEB)/%,$(DIR_BUILD_WEB)/%,$(SOURCES_WEB:.$(SOURCES_EXT)=.o)) build/web/main.o
+OBJECTS_MAIN := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES_MAIN:.$(SOURCES_EXT)=.o))
+OBJECTS_CONSOLE := $(patsubst $(DIR_SOURCE_CONSOLE)/%,$(DIR_BUILD_CONSOLE)/%,$(SOURCES_CONSOLE:.$(SOURCES_EXT)=.o))
+OBJECTS_WEB := $(patsubst $(DIR_SOURCE_WEB)/%,$(DIR_BUILD_WEB)/%,$(SOURCES_WEB:.$(SOURCES_EXT)=.o))
 
 BUILD_DEPS_MAIN := $(DIR_SOURCE)/%.$(SOURCES_EXT)
-BUILD_TARGETS_MAIN := $(DIR_BUILD)/%.o
 
-BUILD_DEPS_WEB := $(DIR_SOURCE_WEB)/%.$(SOURCES_EXT)
+BUILD_TARGETS_MAIN := $(DIR_BUILD)/%.o
+BUILD_TARGETS_CONSOLE := $(DIR_BUILD_CONSOLE)/%.o
+BUILD_TARGETS_WEB := $(DIR_BUILD_WEB)/%.o
 
 TARGET_CONSOLE := $(DIR_OUTPUT)/run
 TARGET_WEB := $(DIR_OUTPUT)/app.html
+
+
+info:
+	@echo "доступные команды: console, web, android_install, android_apk, clean, clean_android"
 
 
 clean:
@@ -78,46 +74,42 @@ clean_android:
 
 
 $(BUILD_TARGETS_MAIN): $(BUILD_DEPS_MAIN)
-	+$(MAKE) -C $(DIR_CONSOLE)
-
 	@echo
 	@echo " проверка" $<
 	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) $<
 	@echo
 	@echo " сборка" $@
 	$(CMD_MKDIR_BUILD)
-	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $< -save-temps
+	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -save-temps=obj -c -o $@ $<
 
-web_build:
+$(BUILD_TARGETS_CONSOLE):
+	+$(MAKE) -C $(DIR_CONSOLE)
+
+$(BUILD_TARGETS_WEB):
 	+$(MAKE) -C $(DIR_WEB)
 
-	@echo
-	@echo " проверка" src/main.c
-	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) src/main.c
-	@echo
-	@echo " сборка" build/web/main.o
-	$(COMPILER_WEB) $(FLAGS_COMPILER) -Wno-tautological-overlap-compare $(INCLUDES) -c -o build/web/main.o src/main.c
 
-android_build:
-	cd $(DIR_ANDROID); \
-	$(CMD_GRADLEW) assembleDebug
-
-
-console: $(OBJECTS_CONSOLE)
+console: COMPILER = gcc
+console: $(OBJECTS_CONSOLE) $(OBJECTS_MAIN)
 	@echo
 	@echo " линковка"
 	$(CMD_MKDIR_OUTPUT)
-	$(COMPILER) $^ -o $(TARGET_CONSOLE) $(LINKS)
+	$(COMPILER) $^ $(LINKS) -o $(TARGET_CONSOLE)
 
-web: web_build
+web: COMPILER = emcc
+web: $(OBJECTS_WEB) $(OBJECTS_MAIN)
 	@echo
 	@echo " линковка"
 	$(CMD_MKDIR_OUTPUT)
-	$(COMPILER_WEB) $(OBJECTS_WEB) -s ASYNCIFY -s ASYNCIFY_IMPORTS=[print] --shell-file $(DIR_SOURCE_WEB)/shell.html $(LINKS) -o $(TARGET_WEB)
+	$(COMPILER) $^ -s ASYNCIFY -s ASYNCIFY_IMPORTS=[print] --shell-file $(DIR_SOURCE_WEB)/shell.html $(LINKS) -o $(TARGET_WEB)
 
 android:
 	cd $(DIR_ANDROID); \
 	$(CMD_GRADLEW) installDebug
+
+android_apk:
+	cd $(DIR_ANDROID); \
+	$(CMD_GRADLEW) assembleDebug
 
 
 .PHONY: clean
@@ -126,7 +118,6 @@ android:
 .PHONY: console
 
 .PHONY: web
-.PHONY: web_build
 
 .PHONY: android
-.PHONY: android_build
+.PHONY: android_apk

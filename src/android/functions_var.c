@@ -3,7 +3,7 @@
 #include <time.h>
 #include <malloc.h>
 #include <stdarg.h>
-#include "functions.h"
+#include "functions_var.h"
 
 void PRINT(const char* format, ...) {
     char* p_path_of_file_output;

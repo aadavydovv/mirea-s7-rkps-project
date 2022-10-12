@@ -1,7 +1,7 @@
 COMPILER := emcc
 SOURCES_EXT := c
 
-DIR_SOURCE := src
+DIR_SOURCE := .
 
 INCLUDES := -I ../../include
 LINKS :=
@@ -16,7 +16,6 @@ FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 
 ifeq ($(OS),Windows_NT)
 	DIR_BUILD := ..\..\build\web
-	#LINKS += -lmingw32
 
 	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
 
@@ -35,8 +34,6 @@ endif
 SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
 OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
 
-BUILD_TARGETS := $(DIR_BUILD)/%.o
-
 
 $(OBJECTS): $(SOURCES)
 	@echo
@@ -46,9 +43,4 @@ $(OBJECTS): $(SOURCES)
 	@echo
 	@echo " сборка" $@
 	$(CMD_MKDIR_BUILD)
-	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $<
-
-clean:
-	$(CMD_RM) $(DIR_BUILD)
-
-.PHONY: clean
+	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -save-temps=obj -c -o $@ $<

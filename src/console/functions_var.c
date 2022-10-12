@@ -1,6 +1,6 @@
 #include <stdarg.h>
 #include <stdio.h>
-#include "functions.h"
+#include "functions_var.h"
 
 void PRINT(const char* format, ...) {
     va_list args;

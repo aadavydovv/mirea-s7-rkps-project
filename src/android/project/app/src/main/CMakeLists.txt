@@ -23,7 +23,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        ../../../../../main.c ../../../../functions.c
+        ../../../../../main.c ../../../../../functions_const.c ../../../../functions_var.c
         )
 
 # Searches for a specified prebuilt library and stores the path as a
