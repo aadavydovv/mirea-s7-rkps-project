@@ -1,48 +1,46 @@
 COMPILER := gcc
-SOURCES_EXT := c
 
-DIR_SOURCE := .
+KEYWORD_BUILD := build
+DIR_PROJECT_ROOT := ../..
+DIR_OUTPUT := $(DIR_PROJECT_ROOT)/output
+DIR_BUILD_CONSOLE := $(DIR_PROJECT_ROOT)/$(KEYWORD_BUILD)/console
 
-INCLUDES := -I ../../include
-LINKS :=
-
-FLAGS_COMPILER := -Wall -Wextra -pedantic
-FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion
-FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
-
-FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
-FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction
-FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
+INCLUDES := -I $(DIR_PROJECT_ROOT)/include
 
 ifeq ($(OS),Windows_NT)
-	DIR_BUILD := ..\..\build\console
-	LINKS += -lmingw32
-
 	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
-
-	CMD_RM := rd /s /q
 	CMD_MKDIR_OUTPUT := if not exist "$(DIR_OUTPUT)" md "$(DIR_OUTPUT)"
-	CMD_MKDIR_BUILD := if not exist "$(DIR_BUILD)" md "$(DIR_BUILD)"
+	CMD_MKDIR_BUILD_CONSOLE := if not exist "$(DIR_BUILD_CONSOLE)" md "$(DIR_BUILD_CONSOLE)"
 else
-	DIR_BUILD := ../../build/console
-
 	CMD_CPPCHECK := cppcheck
-
-	CMD_RM := rm -rf
 	CMD_MKDIR_OUTPUT := mkdir -p $(DIR_OUTPUT)
-	CMD_MKDIR_BUILD := mkdir -p $(DIR_BUILD)
+	CMD_MKDIR_BUILD_CONSOLE := mkdir -p "$(DIR_BUILD_CONSOLE)"
 endif
 
-SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
-OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
+BUILD_TARGETS := $(DIR_BUILD_CONSOLE)/%.o
+BUILD_DEPS := ./%.c
 
+SOURCES_CONSOLE := $(wildcard ./*.c)
+OBJECTS_CONSOLE := $(patsubst ./%,$(DIR_BUILD_CONSOLE)/%,$(SOURCES_CONSOLE:.c=.o))
 
-$(OBJECTS): $(SOURCES)
+all: $(OBJECTS_CONSOLE) build_rng build_core
+	@echo
+	@echo " линковка"
+	$(CMD_MKDIR_OUTPUT)
+	$(COMPILER) $(wildcard $(DIR_PROJECT_ROOT)/$(KEYWORD_BUILD)/**/*.o) -lm -o $(DIR_OUTPUT)/run
+
+$(BUILD_TARGETS): $(BUILD_DEPS)
 	@echo
 	@echo " проверка" $<
-	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) $<
+	$(CMD_CPPCHECK) -q --enable=all --inconclusive --suppress=missingIncludeSystem --suppress=unusedFunction $(INCLUDES) $<
 
 	@echo
 	@echo " сборка" $@
-	$(CMD_MKDIR_BUILD)
-	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $< -save-temps
+	$(CMD_MKDIR_BUILD_CONSOLE)
+	$(COMPILER) -Wall -Wextra -pedantic -Wno-infinite-recursion -Wno-unused-variable -Wno-tautological-overlap-compare $(INCLUDES) -c -o $@ $<
+
+build_rng:
+	+$(MAKE) -C ../xorshift normal
+
+build_core:
+	+$(MAKE) -C .. normal

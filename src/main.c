@@ -1,5 +1,9 @@
 #include "functions_const.h"
 
+#ifdef __ANDROID__
+#include <unistd.h>
+#endif
+
 void line3440() {
 #ifdef __ANDROID__
     sleep(5);
@@ -351,11 +355,13 @@ Java_mirea_s7_rkps_big6_MainActivity_main(JNIEnv *env, jobject obj, jstring jOut
     path_of_file_input = malloc(512);
     strcpy(path_of_file_output, (*env)->GetStringUTFChars(env, jOutfile, 0));
     strcpy(path_of_file_input,(*env)->GetStringUTFChars(env, jInfile, 0));
+    char **argv;
+    initialize_rng(argv);
 #else
 int main(int argc, char **argv) {
-#endif
     (void) argc;
     initialize_rng(argv);
+#endif
     p_line90 = line90;
     W = 0;
 

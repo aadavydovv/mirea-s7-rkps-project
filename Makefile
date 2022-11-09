@@ -1,151 +1,30 @@
-DIR_BUILD := build
-DIR_OUTPUT := output
-DIR_TESTING := testing
-DIR_OUTPUT_TESTING := $(DIR_TESTING)/output
-DIR_TESTING_LOG := $(DIR_TESTING)/log
-LINKS := -lm
-
 ifeq ($(OS),Windows_NT)
-	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
-	CMD_GRADLEW := gradlew
-
 	CMD_RM := rd /s /q
-	CMD_MKDIR_OUTPUT := if not exist "$(DIR_OUTPUT)" md "$(DIR_OUTPUT)"
-	CMD_MKDIR_BUILD := if not exist "$(DIR_BUILD)" md "$(DIR_BUILD)"
-	CMD_MKDIR_OUTPUT_TESTING := if not exist "$(DIR_OUTPUT_TESTING)" md "$(DIR_OUTPUT_TESTING)"
 else
-	CMD_CPPCHECK := cppcheck
-	CMD_GRADLEW := ./gradlew
-
 	CMD_RM := rm -rf
-	CMD_MKDIR_OUTPUT := mkdir -p $(DIR_OUTPUT)
-	CMD_MKDIR_BUILD := mkdir -p $(DIR_BUILD)
-	CMD_MKDIR_OUTPUT_TESTING := mkdir -p $(DIR_OUTPUT_TESTING)
 endif
-
-DIR_SOURCE := src
-SOURCES_EXT := c
-
-KEYWORD_CONSOLE := console
-DIR_CONSOLE := $(DIR_SOURCE)/$(KEYWORD_CONSOLE)
-DIR_SOURCE_CONSOLE := $(DIR_CONSOLE)
-DIR_BUILD_CONSOLE := $(DIR_BUILD)/$(KEYWORD_CONSOLE)
-
-KEYWORD_WEB := web
-DIR_WEB := $(DIR_SOURCE)/$(KEYWORD_WEB)
-DIR_SOURCE_WEB := $(DIR_WEB)
-DIR_BUILD_WEB := $(DIR_BUILD)/$(KEYWORD_WEB)
-
-KEYWORD_XORSHIFT := xorshift
-DIR_XORSHIFT := $(DIR_SOURCE)/$(KEYWORD_XORSHIFT)
-DIR_SOURCE_XORSHIFT := $(DIR_XORSHIFT)
-DIR_BUILD_XORSHIFT := $(DIR_BUILD)/$(KEYWORD_XORSHIFT)
-
-KEYWORD_RNG_TESTING := rng_testing
-DIR_RNG_TESTING := $(DIR_TESTING)/$(KEYWORD_RNG_TESTING)
-DIR_SOURCE_RNG_TESTING := $(DIR_RNG_TESTING)
-DIR_BUILD_RNG_TESTING := $(DIR_BUILD)/$(KEYWORD_RNG_TESTING)
-
-DIR_ANDROID := $(DIR_SOURCE)/android/project
-
-INCLUDES := -I include
-
-FLAGS_COMPILER := -Wall -Wextra -pedantic
-FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion -Wno-unused-variable -Wno-tautological-overlap-compare
-FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
-
-FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
-FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=incorrectLogicOperator --suppress=unusedFunction
-FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
-
-SOURCES_MAIN := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
-SOURCES_XORSHIFT := $(wildcard $(DIR_SOURCE_XORSHIFT)/*.$(SOURCES_EXT))
-SOURCES_RNG_TESTING := $(wildcard $(DIR_SOURCE_RNG_TESTING)/*.$(SOURCES_EXT))
-SOURCES_CONSOLE := $(wildcard $(DIR_SOURCE_CONSOLE)/*.$(SOURCES_EXT))
-SOURCES_WEB := $(wildcard $(DIR_SOURCE_WEB)/*.$(SOURCES_EXT))
-
-OBJECTS_MAIN := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES_MAIN:.$(SOURCES_EXT)=.o))
-OBJECTS_XORSHIFT := $(patsubst $(DIR_SOURCE_XORSHIFT)/%,$(DIR_BUILD_XORSHIFT)/%,$(SOURCES_XORSHIFT:.$(SOURCES_EXT)=.o))
-OBJECTS_RNG_TESTING := $(patsubst $(DIR_SOURCE_RNG_TESTING)/%,$(DIR_BUILD_RNG_TESTING)/%,$(SOURCES_RNG_TESTING:.$(SOURCES_EXT)=.o))
-OBJECTS_CONSOLE := $(patsubst $(DIR_SOURCE_CONSOLE)/%,$(DIR_BUILD_CONSOLE)/%,$(SOURCES_CONSOLE:.$(SOURCES_EXT)=.o))
-OBJECTS_WEB := $(patsubst $(DIR_SOURCE_WEB)/%,$(DIR_BUILD_WEB)/%,$(SOURCES_WEB:.$(SOURCES_EXT)=.o))
-
-BUILD_DEPS_MAIN := $(DIR_SOURCE)/%.$(SOURCES_EXT)
-
-BUILD_TARGETS_MAIN := $(DIR_BUILD)/%.o
-BUILD_TARGETS_XORSHIFT := $(DIR_BUILD_XORSHIFT)/%.o
-BUILD_TARGETS_RNG_TESTING := $(DIR_BUILD_RNG_TESTING)/%.o
-BUILD_TARGETS_CONSOLE := $(DIR_BUILD_CONSOLE)/%.o
-BUILD_TARGETS_WEB := $(DIR_BUILD_WEB)/%.o
-
-TARGET_CONSOLE := $(DIR_OUTPUT)/run
-TARGET_WEB := $(DIR_OUTPUT)/app.html
-TARGET_TESTING := $(DIR_OUTPUT_TESTING)/run
 
 
 info:
-	@echo "доступные команды: console, web, android_install, android_apk, clean, clean_android, testing"
-
+	@echo "доступные команды: console, web, android, android_apk, android_clean, testing, clean"
 
 clean:
-	$(CMD_RM) $(DIR_BUILD) $(DIR_OUTPUT) $(DIR_OUTPUT_TESTING) $(DIR_TESTING_LOG)
+	$(CMD_RM) build output testing/output testing/log
 
-clean_android:
-	cd $(DIR_ANDROID); \
-	$(CMD_GRADLEW) clean
+console: clean
+	+$(MAKE) -C src/console
 
-
-$(BUILD_TARGETS_MAIN): $(BUILD_DEPS_MAIN)
-	@echo
-	@echo " проверка" $<
-	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) $<
-	@echo
-	@echo " сборка" $@
-	$(CMD_MKDIR_BUILD)
-	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -save-temps=obj -c -o $@ $<
-
-$(BUILD_TARGETS_CONSOLE):
-	+$(MAKE) -C $(DIR_CONSOLE)
-
-$(BUILD_TARGETS_WEB):
-	+$(MAKE) -C $(DIR_WEB)
-
-$(BUILD_TARGETS_XORSHIFT):
-	+$(MAKE) -C $(DIR_XORSHIFT)
-
-$(BUILD_TARGETS_RNG_TESTING):
-	+$(MAKE) -C $(DIR_RNG_TESTING)
-
-console: COMPILER = gcc
-console: $(OBJECTS_CONSOLE) $(OBJECTS_XORSHIFT) $(OBJECTS_MAIN)
-	@echo
-	@echo " линковка"
-	$(CMD_MKDIR_OUTPUT)
-	$(COMPILER) $^ $(LINKS) -o $(TARGET_CONSOLE)
-
-web: COMPILER = emcc
-web: $(OBJECTS_WEB) $(OBJECTS_XORSHIFT) $(OBJECTS_MAIN)
-	@echo
-	@echo " линковка"
-	$(CMD_MKDIR_OUTPUT)
-	$(COMPILER) $^ -s ASYNCIFY -s ASYNCIFY_IMPORTS=[print] --shell-file $(DIR_SOURCE_WEB)/shell.html $(LINKS) -o $(TARGET_WEB)
+web: clean
+	+$(MAKE) -C src/web
 
 android:
-	cd $(DIR_ANDROID); \
-	$(CMD_GRADLEW) installDebug
+	+$(MAKE) -C src/android install
 
 android_apk:
-	cd $(DIR_ANDROID); \
-	$(CMD_GRADLEW) assembleDebug
+	+$(MAKE) -C src/android apk
 
+android_clean:
+	+$(MAKE) -C src/android clean
 
-testing_build: COMPILER = gcc
-testing_build: $(OBJECTS_CONSOLE) $(OBJECTS_RNG_TESTING) $(OBJECTS_MAIN)
-	@echo
-	@echo " линковка"
-	$(CMD_MKDIR_OUTPUT_TESTING)
-	$(COMPILER) $^ $(LINKS) -o $(TARGET_TESTING)
-
-testing: clean testing_build
-	cd $(DIR_TESTING); \
-	./run_testing.sh
+testing: clean
+	+$(MAKE) -C testing

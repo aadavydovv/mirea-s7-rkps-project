@@ -1,23 +1,23 @@
-KEYWORD := xorshift
+KEYWORD := core
 
 COMPILER := gcc
 SOURCES_EXT := c
 
 DIR_SOURCE := .
 
-INCLUDES := -I ../../include
+INCLUDES := -I ../include
 LINKS :=
 
 FLAGS_COMPILER := -Wall -Wextra -pedantic
-FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion
+FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion -Wno-unused-variable
 FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
 
 FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
-FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction
+FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=incorrectLogicOperator
 FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 
 ifeq ($(OS),Windows_NT)
-	DIR_BUILD := ..\..\build\$(KEYWORD)
+	DIR_BUILD := ..\build\$(KEYWORD)
 	LINKS += -lmingw32
 
 	CMD_CPPCHECK := C:\Program Files\Cppcheck\cppcheck.exe
@@ -26,7 +26,7 @@ ifeq ($(OS),Windows_NT)
 	CMD_MKDIR_OUTPUT := if not exist "$(DIR_OUTPUT)" md "$(DIR_OUTPUT)"
 	CMD_MKDIR_BUILD := if not exist "$(DIR_BUILD)" md "$(DIR_BUILD)"
 else
-	DIR_BUILD := ../../build/$(KEYWORD)
+	DIR_BUILD := ../build/$(KEYWORD)
 
 	CMD_CPPCHECK := cppcheck
 
@@ -46,6 +46,7 @@ normal: COMPILER = gcc
 normal: $(OBJECTS)
 
 web: COMPILER = emcc
+web: FLAGS_COMPILER += -Wno-tautological-overlap-compare
 web: $(OBJECTS)
 
 $(BUILD_TARGETS): $(BUILD_DEPS)

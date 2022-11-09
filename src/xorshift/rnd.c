@@ -12,7 +12,10 @@ unsigned int get_random_number(unsigned int lowest_possible_number,
     return (state_of_xorshift % (highest_possible_number + 1 - lowest_possible_number)) + lowest_possible_number;
 }
 
-void initialize_rng(char **args) { state_of_xorshift = time(NULL) ^ (long) &printf; }
+void initialize_rng(char **args) {
+    (void) args;
+    state_of_xorshift = time(NULL) ^ (long) &printf;
+}
 
 double RND() {
     return get_random_number(0, 99999999) / 100000000.0;
