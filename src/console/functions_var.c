@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "functions_var.h"
 
-void PRINT(const char* format, ...) {
+void PRINT(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -11,6 +11,6 @@ void PRINT(const char* format, ...) {
     va_end(args);
 }
 
-void input(char* target) {
+void input(char *target) {
     fgets(target, 512, stdin);
 }

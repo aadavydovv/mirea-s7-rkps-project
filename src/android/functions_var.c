@@ -5,8 +5,8 @@
 #include <stdarg.h>
 #include "functions_var.h"
 
-void PRINT(const char* format, ...) {
-    char* p_path_of_file_output;
+void PRINT(const char *format, ...) {
+    char *p_path_of_file_output;
 #ifdef __ANDROID__
     p_path_of_file_output = path_of_file_output;
 #endif
@@ -14,20 +14,20 @@ void PRINT(const char* format, ...) {
     va_list args;
     va_start(args, format);
 
-    FILE* file_output = fopen(p_path_of_file_output, "a");
+    FILE *file_output = fopen(p_path_of_file_output, "a");
     fseek(file_output, -100, SEEK_END);
     vfprintf(file_output, format, args);
     fclose(file_output);
 }
 
-void input(char* target) {
-    char* p_path_of_file_input;
+void input(char *target) {
+    char *p_path_of_file_input;
 #ifdef __ANDROID__
     p_path_of_file_input = path_of_file_input;
 #endif
 
     long size = 0;
-    FILE* file_input;
+    FILE *file_input;
     while (size == 0) {
         file_input = fopen(p_path_of_file_input, "r");
         fseek(file_input, 0L, SEEK_END);

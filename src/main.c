@@ -42,14 +42,14 @@ void line3260() {
 
     // 3270
     if (W > 0) {
-        PRINT("YOU'RE AHEAD $ %ld\n", W);
+        PRINT("YOU'RE AHEAD $ %ld \n", W);
         PRINT("\n");
         p_line90();
     }
 
     // 3280
     if (W < 0) {
-        PRINT("YOU'RE BEHIND $%ld\n", W);
+        PRINT("YOU'RE BEHIND $%ld \n", W);
         PRINT("\n");
         p_line90();
     }
@@ -73,13 +73,13 @@ void line2060() {
         S3 *= C1;
 
         // 2140
-        PRINT("YOU WIN  %d  TIMES ON: %ld\n", C1, S2);
+        PRINT("YOU WIN  %d  TIMES ON: %ld \n", C1, S2);
     } else {
         // 2110
         S3 *= -1;
 
         // 2120
-        PRINT("YOU LOSE ON:  %ld\n", S2);
+        PRINT("YOU LOSE ON:  %ld \n", S2);
     }
 
     // 2150
@@ -113,7 +113,7 @@ void line1870() {
     }
 
     // 1950
-    PRINT("THE LUCKY NUMBERS ARE:  %ld  %ld  %ld\n", S_dim[1], S_dim[2], S_dim[3]);
+    PRINT("THE LUCKY NUMBERS ARE:  %ld  %ld  %ld \n", S_dim[1], S_dim[2], S_dim[3]);
 
     // 1960
     return;
@@ -352,9 +352,10 @@ Java_mirea_s7_rkps_big6_MainActivity_main(JNIEnv *env, jobject obj, jstring jOut
     strcpy(path_of_file_output, (*env)->GetStringUTFChars(env, jOutfile, 0));
     strcpy(path_of_file_input,(*env)->GetStringUTFChars(env, jInfile, 0));
 #else
-int main() {
+int main(int argc, char **argv) {
 #endif
-    initialize_xorshift();
+    (void) argc;
+    initialize_rng(argv);
     p_line90 = line90;
     W = 0;
 

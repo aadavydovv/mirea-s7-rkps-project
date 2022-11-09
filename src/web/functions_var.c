@@ -6,7 +6,7 @@
 #include <string.h>
 
 //@clion_formatter:off
-EM_JS(void, js_print, (const char* line), {
+EM_JS(void, js_print, (const char *line), {
     output = UTF8ToString(line);
 
     // comment this and see what happens to the TAB()'ed output :(
@@ -34,11 +34,11 @@ EM_JS(char*, js_get_value_of_input, (), {
 });
 //@clion_formatter:on
 
-void PRINT(const char* format, ...) {
+void PRINT(const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    char* print_buffer = malloc(512);
+    char *print_buffer = malloc(512);
     vsprintf(print_buffer, format, args);
     va_end(args);
 
@@ -46,7 +46,7 @@ void PRINT(const char* format, ...) {
     emscripten_sleep(20);
 }
 
-void input(char* target) {
+void input(char *target) {
     while (js_is_value_of_input_null()) {
         emscripten_sleep(100);
     }
