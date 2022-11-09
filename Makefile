@@ -12,7 +12,7 @@ clean:
 	$(CMD_RM) build output testing/output testing/log
 
 console: clean
-	+$(MAKE) -C src/console
+	+$(MAKE) -C src/console normal
 
 web: clean
 	+$(MAKE) -C src/web

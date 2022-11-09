@@ -1,4 +1,4 @@
-KEYWORD := rng_testing
+KEYWORD := testing
 
 COMPILER := gcc
 SOURCES_EXT := c
@@ -38,13 +38,18 @@ endif
 SOURCES := $(wildcard $(DIR_SOURCE)/*.$(SOURCES_EXT))
 OBJECTS := $(patsubst $(DIR_SOURCE)/%,$(DIR_BUILD)/%,$(SOURCES:.$(SOURCES_EXT)=.o))
 
+BUILD_TARGETS := $(DIR_BUILD)/%.o
+BUILD_DEPS := $(DIR_SOURCE)/%.$(SOURCES_EXT)
 
-$(OBJECTS): $(SOURCES)
+
+all: $(OBJECTS)
+
+$(BUILD_TARGETS): $(BUILD_DEPS)
 	@echo
 	@echo " проверка" $<
-	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) $<
+	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES) $<
 
 	@echo
 	@echo " сборка" $@
 	$(CMD_MKDIR_BUILD)
-	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $< -save-temps
+	$(COMPILER) $(FLAGS_COMPILER) $(INCLUDES) -c -o $@ $<

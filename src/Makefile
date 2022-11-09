@@ -13,7 +13,7 @@ FLAGS_COMPILER_SUPPRESS := -Wno-infinite-recursion -Wno-unused-variable
 FLAGS_COMPILER += $(FLAGS_COMPILER_SUPPRESS)
 
 FLAGS_CPPCHECK := -q --enable=all --inconclusive $(INCLUDES)
-FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=incorrectLogicOperator
+FLAGS_CPPCHECK_SUPPRESS := --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=incorrectLogicOperator --suppress=uninitvar
 FLAGS_CPPCHECK += $(FLAGS_CPPCHECK_SUPPRESS)
 
 ifeq ($(OS),Windows_NT)

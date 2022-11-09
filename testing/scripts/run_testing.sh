@@ -5,14 +5,16 @@ echo
 echo "начало тестирования..."
 echo
 
-mkdir -p log/c log/vintbas
+DIR_LOGS="../output/log"
+
+mkdir -p "$DIR_LOGS/c" "$DIR_LOGS/vintbas"
 
 scripts/run_vintbas.sh
 scripts/run_c.sh
 
 DO_LOGS_DIFFER=0
 
-for log in log/vintbas/*; do
+for log in "$DIR_LOGS"/vintbas/*; do
   echo
   echo
   echo "проверка $(basename "$log")..."
@@ -20,6 +22,7 @@ for log in log/vintbas/*; do
   diff "$log" "$(echo "$log" | sed -r 's/log\/vintbas\//log\/c\//g')"
   if [[ $? -ne 0 ]]; then
     DO_LOGS_DIFFER=1
+    break;
   fi
 done
 

@@ -23,7 +23,14 @@ BUILD_DEPS := ./%.c
 SOURCES_CONSOLE := $(wildcard ./*.c)
 OBJECTS_CONSOLE := $(patsubst ./%,$(DIR_BUILD_CONSOLE)/%,$(SOURCES_CONSOLE:.c=.o))
 
-all: $(OBJECTS_CONSOLE) build_rng build_core
+
+normal: $(OBJECTS_CONSOLE) build_rng build_core
+	@echo
+	@echo " линковка"
+	$(CMD_MKDIR_OUTPUT)
+	$(COMPILER) $(wildcard $(DIR_PROJECT_ROOT)/$(KEYWORD_BUILD)/**/*.o) -lm -o $(DIR_OUTPUT)/run
+
+testing: $(OBJECTS_CONSOLE) build_core
 	@echo
 	@echo " линковка"
 	$(CMD_MKDIR_OUTPUT)

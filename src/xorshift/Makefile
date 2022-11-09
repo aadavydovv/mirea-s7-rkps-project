@@ -51,7 +51,7 @@ web: $(OBJECTS)
 $(BUILD_TARGETS): $(BUILD_DEPS)
 	@echo
 	@echo " проверка" $<
-	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES_DEFAULT) $<
+	$(CMD_CPPCHECK) $(FLAGS_CPPCHECK) $(INCLUDES) $<
 
 	@echo
 	@echo " сборка" $@

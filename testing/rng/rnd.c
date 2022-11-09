@@ -25,10 +25,10 @@ void initialize_rng(char **args) {
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
-    char *pointer_to_numbers;
 
     file_of_vintbas_output = fopen(args[1], "r");
     while ((read = getline(&line, &len, file_of_vintbas_output)) != -1) {
+        char *pointer_to_numbers;
         if ((pointer_to_numbers = strstr(line, "THE LUCKY NUMBERS ARE:")) != NULL) {
             pointer_to_numbers = strstr(pointer_to_numbers, ":") + 3;
             random_numbers[(n_of_random_numbers_set * 3) + 1] = (int) pointer_to_numbers[0] - '0';
